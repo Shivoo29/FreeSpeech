@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreeSpeech - Professional Audio Processing Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Landing Page -->
+    <div id="landing-page" class="page active">
+        <!-- Navigation -->
+        <nav class="navbar">
+            <div class="container">
+                <div class="nav-brand">
+                    <h1>🎙️ FreeSpeech</h1>
+                </div>
+                <div class="nav-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How It Works</a>
+                    <button class="btn btn-outline" onclick="showLogin()">Login</button>
+                    <button class="btn btn-primary" onclick="showRegister()">Get Started</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1 class="hero-title">Process Audio Files with Ease</h1>
+                    <p class="hero-subtitle">
+                        Upload, analyze, and transform your audio files in seconds.
+                        Professional-grade audio processing made simple.
+                    </p>
+                    <div class="hero-cta">
+                        <button class="btn btn-primary btn-lg" onclick="showRegister()">
+                            Start Processing Free
+                        </button>
+                        <button class="btn btn-outline btn-lg" onclick="scrollToDemo()">
+                            See How It Works
+                        </button>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <div class="audio-wave-demo"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="container">
+                <h2 class="section-title">Powerful Audio Processing Features</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">📤</div>
+                        <h3>Upload Any Format</h3>
+                        <p>Support for WAV, MP3, OGG, FLAC, AAC, and more</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h3>Real-time Analysis</h3>
+                        <p>Visualize waveforms and audio properties instantly</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎚️</div>
+                        <h3>Audio Processing</h3>
+                        <p>Normalize, boost, fade, and convert your files</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💾</div>
+                        <h3>Easy Export</h3>
+                        <p>Download processed files in your preferred format</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h3>Secure Storage</h3>
+                        <p>Your files are encrypted and stored safely</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>Lightning Fast</h3>
+                        <p>Process files in seconds with optimized algorithms</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="how-it-works">
+            <div class="container">
+                <h2 class="section-title">How It Works</h2>
+                <div class="steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <h3>Create Account</h3>
+                        <p>Sign up in seconds with just your email</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <h3>Upload Audio</h3>
+                        <p>Drag and drop your audio files</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <h3>Process & Analyze</h3>
+                        <p>Apply filters and view visualizations</p>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <h3>Download Results</h3>
+                        <p>Export your processed audio files</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <h2>Ready to Transform Your Audio?</h2>
+                <p>Join professionals using FreeSpeech for audio processing</p>
+                <button class="btn btn-primary btn-lg" onclick="showRegister()">
+                    Get Started Now
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2024 FreeSpeech. Professional Audio Processing Platform.</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h2>Welcome Back</h2>
+            <p class="modal-subtitle">Login to access your audio files</p>
+            <form id="login-form" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required placeholder="Enter your password">
+                </div>
+                <div id="login-error" class="error-message"></div>
+                <button type="submit" class="btn btn-primary btn-block">Login</button>
+            </form>
+            <p class="modal-footer">
+                Don't have an account? <a href="#" onclick="showRegister()">Sign up</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Register Modal -->
+    <div id="register-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModals()">&times;</span>
+            <h2>Get Started Free</h2>
+            <p class="modal-subtitle">Create your account in seconds</p>
+            <form id="register-form" onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required placeholder="Choose a username">
+                </div>
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required placeholder="Minimum 8 characters" minlength="8">
+                </div>
+                <div id="register-error" class="error-message"></div>
+                <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            </form>
+            <p class="modal-footer">
+                Already have an account? <a href="#" onclick="showLogin()">Login</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- Dashboard Page -->
+    <div id="dashboard-page" class="page">
+        <nav class="navbar dashboard-nav">
+            <div class="container">
+                <div class="nav-brand">
+                    <h1>🎙️ FreeSpeech</h1>
+                </div>
+                <div class="nav-links">
+                    <span id="user-welcome"></span>
+                    <button class="btn btn-outline" onclick="logout()">Logout</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1>Your Audio Files</h1>
+                <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                    📤 Upload Audio
+                </button>
+                <input type="file" id="file-input" accept=".wav,.mp3,.ogg,.flac,.m4a,.aac" style="display:none" onchange="handleFileUpload(event)">
+            </div>
+
+            <div id="upload-progress" class="upload-progress" style="display:none">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <p>Uploading...</p>
+            </div>
+
+            <div id="files-container" class="files-grid">
+                <div class="empty-state">
+                    <div class="empty-icon">🎵</div>
+                    <h3>No audio files yet</h3>
+                    <p>Upload your first audio file to get started</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Detail Modal -->
+    <div id="audio-detail-modal" class="modal">
+        <div class="modal-content modal-large">
+            <span class="close" onclick="closeAudioDetail()">&times;</span>
+            <h2 id="audio-detail-title">Audio File</h2>
+
+            <div class="audio-detail-content">
+                <div class="audio-info">
+                    <h3>File Information</h3>
+                    <div id="audio-info-content"></div>
+                </div>
+
+                <div class="audio-visualization">
+                    <h3>Waveform</h3>
+                    <canvas id="waveform-canvas"></canvas>
+                </div>
+
+                <div class="audio-processing">
+                    <h3>Process Audio</h3>
+                    <div class="processing-options">
+                        <button class="btn btn-secondary" onclick="processAudio('normalize')">Normalize</button>
+                        <button class="btn btn-secondary" onclick="processAudio('boost')">Boost +6dB</button>
+                        <button class="btn btn-secondary" onclick="processAudio('fade_in')">Fade In</button>
+                        <button class="btn btn-secondary" onclick="processAudio('fade_out')">Fade Out</button>
+                        <button class="btn btn-secondary" onclick="processAudio('convert_mp3')">Convert to MP3</button>
+                    </div>
+                </div>
+
+                <div class="audio-actions">
+                    <button class="btn btn-primary" onclick="downloadAudio()">Download</button>
+                    <button class="btn btn-danger" onclick="deleteAudio()">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
