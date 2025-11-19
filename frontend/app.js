@@ -152,8 +152,28 @@ async function handleFileUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
 
+    // Validate file type
+    const allowedExtensions = ['wav', 'mp3', 'ogg', 'flac', 'm4a', 'aac'];
+    const fileExtension = file.name.split('.').pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExtension)) {
+        alert(`Invalid file type. Allowed formats: ${allowedExtensions.join(', ').toUpperCase()}`);
+        event.target.value = '';
+        return;
+    }
+
+    // Validate file size (50MB max)
+    const maxSize = 50 * 1024 * 1024;
+    if (file.size > maxSize) {
+        alert('File too large. Maximum size is 50MB.');
+        event.target.value = '';
+        return;
+    }
+
     const uploadProgress = document.getElementById('upload-progress');
+    const uploadMessage = document.getElementById('upload-message');
     uploadProgress.style.display = 'block';
+    uploadMessage.textContent = `Uploading ${file.name}...`;
 
     const formData = new FormData();
     formData.append('file', file);
@@ -170,19 +190,58 @@ async function handleFileUpload(event) {
         const data = await response.json();
 
         if (response.ok) {
-            uploadProgress.style.display = 'none';
+            uploadMessage.textContent = 'Upload successful!';
+            setTimeout(() => {
+                uploadProgress.style.display = 'none';
+            }, 1000);
             loadAudioFiles();
+            showSuccessMessage('File uploaded successfully!');
         } else {
-            alert(data.error || 'Upload failed');
             uploadProgress.style.display = 'none';
+            showErrorMessage(data.error || 'Upload failed');
         }
     } catch (error) {
-        alert('Network error. Please try again.');
         uploadProgress.style.display = 'none';
+        showErrorMessage('Network error. Please try again.');
     }
 
     // Reset file input
     event.target.value = '';
+}
+
+// Helper Functions for Messages
+function showSuccessMessage(message) {
+    // Create temporary success message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'success-message active';
+    messageDiv.textContent = message;
+    messageDiv.style.position = 'fixed';
+    messageDiv.style.top = '20px';
+    messageDiv.style.right = '20px';
+    messageDiv.style.zIndex = '10000';
+    messageDiv.style.minWidth = '300px';
+    document.body.appendChild(messageDiv);
+
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 3000);
+}
+
+function showErrorMessage(message) {
+    // Create temporary error message
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'error-message active';
+    messageDiv.textContent = message;
+    messageDiv.style.position = 'fixed';
+    messageDiv.style.top = '20px';
+    messageDiv.style.right = '20px';
+    messageDiv.style.zIndex = '10000';
+    messageDiv.style.minWidth = '300px';
+    document.body.appendChild(messageDiv);
+
+    setTimeout(() => {
+        messageDiv.remove();
+    }, 5000);
 }
 
 // Load Audio Files
@@ -259,6 +318,28 @@ async function showAudioDetail(fileId) {
 
 function displayAudioDetail(data) {
     document.getElementById('audio-detail-title').textContent = 'Audio Analysis';
+
+    // Load audio in player
+    const audioPlayer = document.getElementById('audio-player');
+    audioPlayer.src = `${API_BASE_URL}/audio/${currentAudioId}/stream`;
+    audioPlayer.load();
+
+    // Add authorization header for audio requests
+    fetch(`${API_BASE_URL}/audio/${currentAudioId}/stream`, {
+        headers: {
+            'Authorization': `Bearer ${authToken}`
+        }
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        audioPlayer.src = url;
+        audioPlayer.load();
+    })
+    .catch(error => {
+        console.error('Failed to load audio:', error);
+        showErrorMessage('Failed to load audio player');
+    });
 
     const infoContent = document.getElementById('audio-info-content');
     infoContent.innerHTML = `
@@ -337,6 +418,10 @@ function closeAudioDetail() {
 async function processAudio(operation) {
     if (!currentAudioId) return;
 
+    const statusDiv = document.getElementById('processing-status');
+    statusDiv.textContent = 'Processing audio...';
+    statusDiv.classList.add('active');
+
     try {
         const response = await fetch(`${API_BASE_URL}/audio/${currentAudioId}/process`, {
             method: 'POST',
@@ -350,14 +435,17 @@ async function processAudio(operation) {
         const data = await response.json();
 
         if (response.ok) {
-            alert('Audio processed successfully!');
+            statusDiv.classList.remove('active');
+            showSuccessMessage('Audio processed successfully!');
             closeAudioDetail();
             loadAudioFiles();
         } else {
-            alert(data.error || 'Processing failed');
+            statusDiv.classList.remove('active');
+            showErrorMessage(data.error || 'Processing failed');
         }
     } catch (error) {
-        alert('Network error. Please try again.');
+        statusDiv.classList.remove('active');
+        showErrorMessage('Network error. Please try again.');
     }
 }
 
@@ -383,13 +471,54 @@ async function deleteAudio() {
         });
 
         if (response.ok) {
+            showSuccessMessage('File deleted successfully');
             closeAudioDetail();
             loadAudioFiles();
         } else {
-            alert('Delete failed');
+            showErrorMessage('Delete failed');
         }
     } catch (error) {
-        alert('Network error. Please try again.');
+        showErrorMessage('Network error. Please try again.');
+    }
+}
+
+// Search/Filter Files
+function filterFiles() {
+    const searchTerm = document.getElementById('search-input').value.toLowerCase();
+    const fileCards = document.querySelectorAll('.file-card');
+
+    fileCards.forEach(card => {
+        const filename = card.querySelector('.file-name').textContent.toLowerCase();
+        if (filename.includes(searchTerm)) {
+            card.classList.remove('hidden');
+        } else {
+            card.classList.add('hidden');
+        }
+    });
+
+    // Check if any files are visible
+    const visibleCards = Array.from(fileCards).filter(card => !card.classList.contains('hidden'));
+    const container = document.getElementById('files-container');
+
+    if (visibleCards.length === 0 && searchTerm !== '') {
+        // Show no results message
+        const existingEmpty = container.querySelector('.empty-state');
+        if (!existingEmpty) {
+            const emptyState = document.createElement('div');
+            emptyState.className = 'empty-state';
+            emptyState.innerHTML = `
+                <div class="empty-icon">🔍</div>
+                <h3>No files found</h3>
+                <p>No files match your search "${searchTerm}"</p>
+            `;
+            container.appendChild(emptyState);
+        }
+    } else {
+        // Remove no results message if exists
+        const emptyState = container.querySelector('.empty-state');
+        if (emptyState) {
+            emptyState.remove();
+        }
     }
 }
 

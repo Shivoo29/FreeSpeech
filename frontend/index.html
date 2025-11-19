@@ -204,17 +204,20 @@
         <div class="dashboard-container">
             <div class="dashboard-header">
                 <h1>Your Audio Files</h1>
-                <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
-                    📤 Upload Audio
-                </button>
-                <input type="file" id="file-input" accept=".wav,.mp3,.ogg,.flac,.m4a,.aac" style="display:none" onchange="handleFileUpload(event)">
+                <div class="dashboard-actions">
+                    <input type="text" id="search-input" placeholder="🔍 Search files..." onkeyup="filterFiles()">
+                    <button class="btn btn-primary" onclick="document.getElementById('file-input').click()">
+                        📤 Upload Audio
+                    </button>
+                    <input type="file" id="file-input" accept=".wav,.mp3,.ogg,.flac,.m4a,.aac" style="display:none" onchange="handleFileUpload(event)">
+                </div>
             </div>
 
             <div id="upload-progress" class="upload-progress" style="display:none">
                 <div class="progress-bar">
                     <div class="progress-fill"></div>
                 </div>
-                <p>Uploading...</p>
+                <p id="upload-message">Uploading...</p>
             </div>
 
             <div id="files-container" class="files-grid">
@@ -234,6 +237,13 @@
             <h2 id="audio-detail-title">Audio File</h2>
 
             <div class="audio-detail-content">
+                <div class="audio-player-section">
+                    <h3>Audio Player</h3>
+                    <audio id="audio-player" controls style="width: 100%;">
+                        Your browser does not support the audio element.
+                    </audio>
+                </div>
+
                 <div class="audio-info">
                     <h3>File Information</h3>
                     <div id="audio-info-content"></div>
@@ -246,6 +256,7 @@
 
                 <div class="audio-processing">
                     <h3>Process Audio</h3>
+                    <div id="processing-status" class="processing-status"></div>
                     <div class="processing-options">
                         <button class="btn btn-secondary" onclick="processAudio('normalize')">Normalize</button>
                         <button class="btn btn-secondary" onclick="processAudio('boost')">Boost +6dB</button>

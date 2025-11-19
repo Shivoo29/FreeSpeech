@@ -335,6 +335,33 @@ def process_audio(file_id):
     except Exception as e:
         return jsonify({'error': f'Processing failed: {str(e)}'}), 500
 
+@app.route('/api/audio/<int:file_id>/stream', methods=['GET'])
+@jwt_required()
+def stream_audio(file_id):
+    user_id = get_jwt_identity()
+    audio_file = AudioFile.query.filter_by(id=file_id, user_id=user_id).first()
+
+    if not audio_file:
+        return jsonify({'error': 'File not found'}), 404
+
+    # Determine MIME type
+    ext = audio_file.file_path.rsplit('.', 1)[1].lower()
+    mime_types = {
+        'wav': 'audio/wav',
+        'mp3': 'audio/mpeg',
+        'ogg': 'audio/ogg',
+        'flac': 'audio/flac',
+        'm4a': 'audio/mp4',
+        'aac': 'audio/aac'
+    }
+    mime_type = mime_types.get(ext, 'audio/mpeg')
+
+    return send_file(
+        audio_file.file_path,
+        mimetype=mime_type,
+        as_attachment=False
+    )
+
 @app.route('/api/audio/<int:file_id>/download', methods=['GET'])
 @jwt_required()
 def download_audio(file_id):
